@@ -1,6 +1,3 @@
-// This file can be used to add utility functions for the application.
-// Currently, no utility functions have been defined.
-
 export const waitForIframeReady = (iframe: HTMLIFrameElement, cb: () => void) => {
   iframe.contentWindow?.postMessage(
     JSON.stringify({

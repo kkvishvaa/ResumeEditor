@@ -138,64 +138,9 @@ const ResumeGenerator: React.FC = () => {
     });
   };
 
-  // Check ATS score
-  const handleCheckATS = async () => {
-    if (!resumeRef.current || !jobDescription.trim()) return;
-    setIsLoading(true);
-    try {
-      const editor = resumeRef.current.querySelector('iframe');
-      if (!editor) return;
-      const contentWindow = editor.contentWindow;
-      if (!contentWindow) return;
-      contentWindow.postMessage(
-        {
-          type: 'GET_TEXT',
-        },
-        '*'
-      );
-      window.addEventListener('message', function handler(event) {
-        if (event.origin !== window.location.origin) return;
-        const { resumeText } = event.data;
-        if (resumeText) {
-          handleCheckATSScoreAndSetState(resumeText, jobDescription);
-        }
-        window.removeEventListener('message', handler);
-      });
-    } catch (error) {
-      alert('Failed to check ATS score. Please try again.');
-    }
-    setIsLoading(false);
-  };
+ 
 
-  // Renamed to avoid conflict with global checkATSScore
-  const handleCheckATSScoreAndSetState = async (resumeText: string, jobDescription: string) => {
-    const result = await checkATSScore(resumeText, jobDescription);
-    if (result) {
-      setAtsScore(result.score);
-      setAtsFeedback(result.feedback);
-    }
-  };
-
-  // Download PDF
-  const handleDownloadPDF = async () => {
-    if (!resumeRef.current) {
-      console.error('Resume reference is missing.');
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const dataUrl = await toPng(resumeRef.current, { quality: 0.95 });
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(dataUrl);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('resume.pdf');
-    } catch (error) {
-      alert('Failed to generate PDF. Please try again.');
-    }
-    setIsLoading(false);
-  };
+  
 
   const handleUpload = async () => {
     if (!fileInput.current?.files?.[0]) return;
